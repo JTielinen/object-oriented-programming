@@ -1,52 +1,55 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 
 namespace Example
 {
-    // Custom exception
     public class WordListNotFoundException : Exception
     {
         public WordListNotFoundException(string message) : base(message)
         {
-
         }
     }
 
     class FileManager
     {
         private string filePath;
-
-        // Constructor
         public FileManager()
         {
             this.filePath = string.Empty;
         }
-
-        // Constructor
         public FileManager(string filePath)
         {
-            this.filePath = string.Empty;
+            this.filePath = filePath;
         }
 
         public string ReadWords()
         {
-            string content = string.Empty;
-
-            content = ReadFile();
-
-            return content;
+            try
+            {
+                return ReadFile();
+            }
+            catch (WordListNotFoundException ex)
+            {
+                Console.WriteLine($"Virhe: {ex.Message}");
+                return string.Empty;
+            }
+            catch (FileNotFoundException ex)
+            {
+                Console.WriteLine($"Virhe: {ex.Message}");
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Tuntematon virhe: {ex.Message}");
+                return string.Empty;
+            }
         }
-
-        /* Method reads file from a local 
-         * directory path.
-         */
         private string ReadFile()
         {
             if (!File.Exists(filePath))
             {
-                // Throw exception if file does not exists
-                throw new FileNotFoundException("File not available");
+                throw new WordListNotFoundException("Tiedostoa ei löytynyt!");
             }
 
             string directoryName = Path.GetDirectoryName(filePath);
